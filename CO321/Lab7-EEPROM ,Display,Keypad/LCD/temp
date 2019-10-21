@@ -1,0 +1,88 @@
+ lcd_clrscr();
+     lcd_puts_P( "Enter your preference" );
+     _delay_ms(2000);
+     lcd_command(LCD_MOVE_DISP_LEFT);
+     lcd_clrscr();
+     int complete=0;
+      
+     while(!complete){
+	if(temp==0){
+	   lcd_puts("1.Encryption");
+	   lcd_gotoxy(0,1);
+	   lcd_puts("2.Change the key");
+	   _delay_ms(2000);
+	   while(read_val!='1' && read_val!='2'){read_val= Read_key(); /*lcd_clrscr();lcd_putc(read_val);*/}
+	 }else{
+	       break;
+	  }
+	
+	if(read_val=='1'){
+	   lcd_clrscr();
+	   lcd_puts("Enter text and");
+	   lcd_gotoxy(0,1);
+           lcd_puts("To end Press A");
+	   _delay_ms(2000);
+	   lcd_clrscr();
+	   
+	   
+	   while(read_val!='A'){
+	       read_val= Read_key();
+	      _delay_ms(200);
+	       if(read_val=='H') continue;
+	       char c[10];
+	       c[0]=read_val;
+	       strcat(str,c);
+	       
+	       lcd_putc(read_val);
+	   }
+	   
+	   
+	   lcd_clrscr();
+	   char key=EEPROMread (1);
+	   char *s=cipher(str,key);
+	   lcd_puts("Encrypted text-");
+	   lcd_gotoxy(0,1);
+           lcd_puts(s);
+	   _delay_ms(3000);
+	   
+	   flag = 1;
+	   
+	  
+	   
+	}else if(read_val=='2'){
+	   lcd_clrscr();
+	   lcd_puts("Enter the key..");
+	   lcd_gotoxy(0,1);
+	   _delay_ms(1000);
+	   read_val= Read_key();
+	   while(read_val=='H'){read_val= Read_key();  lcd_gotoxy(0,1);lcd_putc(read_val);}
+	  
+	   EEPROMwrite(1,read_val);
+	   
+	   lcd_clrscr();
+	    _delay_ms(1000);
+	   lcd_puts("Key is changed..");
+	    _delay_ms(2000);
+	    flag=1;
+	 
+	}
+	
+	if(flag==1){
+	   lcd_clrscr();
+	   lcd_puts("Continue????");
+	   lcd_gotoxy(0,1);
+        lcd_puts("1.Yes    2.No");
+	   _delay_ms(2000);
+	   read_val=Read_key();
+	   while(read_val!='1' && read_val!='2'){read_val= Read_key();/* lcd_clrscr();lcd_putc(read_val);*/}
+	   
+	   if(read_val=='1'){complete=1;break;}
+	   else if(read_val=='2'){
+	     lcd_clrscr();
+	     lcd_puts("Good bye");
+	     temp=1;
+	     exit(1);
+	   
+	   }
+	}
+      }
